@@ -13,7 +13,7 @@ const IS_MIGRATE = TRUE;
 set_time_limit(0);
 error_reporting(E_ALL);
 
-$db = new Database('mysql:dbname=pokeuniv_legacy;host=localhost', 'root', file_get_contents('./password'));
+$db = new Database('mysql:dbname=pokeuniv_legacy;host=localhost', 'root', trim(file_get_contents('./password')));
 
 $d = [
     'identification' => '嘟嘟之魂',

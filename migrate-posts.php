@@ -47,6 +47,7 @@ $attachments   = Tools::retrieveData('attachments');
 
 $discussions     = [];
 $discussion_tags = [];
+$user_updates    = [];
 $post_id         = 1;
 $disc_id         = 1;
 $query           = $db->query('SELECT tid, fid, authorid, dateline, subject, views, typeid, highlight, closed, displayorder, status FROM pokeuniv_legacy.pre_forum_thread ORDER BY tid');
@@ -186,10 +187,24 @@ while ($thread = $query->fetch(PDO::FETCH_ASSOC)) {
             'is_approved'   => 1,
             'is_spam'       => 0
         ];
+
+        // generate user post count table
+        if (!isset($user_updates[$post['authorid']])) {
+            $user_updates[$post['authorid']] = [
+                'id'                => $users[$post['authorid']]['id'],
+                'discussions_count' => 0,
+                'comments_count'    => 0
+            ];
+        }
+        $user_updates[$post['authorid']]['comments_count'] += 1;
+
         $post_id++;
         $number++;
         $post_count++;
     }
+
+    $user_updates[$thread['authorid']]['comments_count']    -= 1;
+    $user_updates[$thread['authorid']]['discussions_count'] += 1;
 
     if ($posts && !$db->insertData('flarum.flarum_posts', $posts)) {
         Tools::println('Failed! (discussion#%d)', FALSE, [$disc_id], 'red');
@@ -232,4 +247,6 @@ if (!$db->insertData('flarum.flarum_discussions', $discussions))
     Tools::println('Failed to generate discussions. Bye.', FALSE, [], 'red');
 if (!$db->insertData('flarum.flarum_discussions_tags', $discussion_tags))
     Tools::println('Failed to generate discussion tags. Bye.', FALSE, [], 'red');
+if (!$db->insertData('flarum.flarum_users', $user_updates, TRUE))
+    Tools::println('Failed to update user post count. Bye.', FALSE, [], 'red');
 

@@ -87,11 +87,15 @@ class Tools {
             ['/\[pshuffle=(\d+),(\d+)\](.+?)\[\/pshuffle\]/', '[pshuffle width=$1 height=$2]$3[/pshuffle]'],
             ['/\[tr=(.+?)\]/', '[tr]'],
             ['/\[td=(\d+)%\]/', '[td width=$3]'],
-            ['/\[td=(\d+),(\d+)\]/', '[td colspan=$1 rowspan=$2]'],
-            ['/\[td=(\d+),(\d+),(\d+)%\]/', '[td colspan=$1 rowspan=$2 width=$3]'],
+            ['/\[td=(\d+),(\d+)\]/', function ($m) {
+                return '[td' . ($m[1] > 1 ? ' colspan=' . $m[1] : '') . ($m[2] > 1 ? ' rowspan=' . $m[2] : '') . ']';
+            }],
+            ['/\[td=(\d+),(\d+),(\d+)%\]/', '[td colspan=$1 rowspan=$2 width=$3]', function ($m) {
+                return '[td' . ($m[1] > 1 ? ' colspan=' . $m[1] : '') . ($m[2] > 1 ? ' rowspan=' . $m[2] : '') . ' width=' . $m[3] . ']';
+            }],
             ['/\[table=(\d+)%\]/', '[table]'],
             ['/\[quote\]\[size=2\]\[url=forum\.php\?mod=redirect&goto=findpost&pid=(\d+)&ptid=\d+\]\[color=#999999\](.+?) 发表于.+?\[\/quote\]/s', '@$2#$1'],
-            ['/\[\/?(font|p|index|float|backcolor|align)(=.+?)?\]/', ''],
+            ['/\[\/?(font|p|index|float|backcolor|align|hide)(=.+?)?\]/', ''],
             ['/\[size=(.+?)\]/', function ($m) {
                 $m[1] = intval($m[1]);
                 $em_map = [null, 0.63, 0.82, 1.0, 1.13, 1.5, 2.0, 3.0];

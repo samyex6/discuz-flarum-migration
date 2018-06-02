@@ -37,7 +37,7 @@ class Database extends PDO {
         return $this;
     }
 
-    public function insertData ($table, $data) {
+    public function insertData ($table, $data, $update = FALSE) {
         $row_size = count($data);
         if ($row_size === 0)
             return FALSE;
@@ -52,9 +52,13 @@ class Database extends PDO {
             return array_merge($c, array_values($v));
         }, []);
 
+        $trail = $update ? ' ON DUPLICATE KEY UPDATE ' . implode(', ', array_map(function ($v) {
+            return $v . ' = VALUES(' . $v . ')';
+        }, $keys)) : '';
+
         $col_size       = count($flattened_data) / $row_size;
         $question_marks = ltrim(str_repeat(PHP_EOL . ',(' . ltrim(str_repeat(',?', $col_size), ',') . ')', $row_size), ',' . PHP_EOL);
-        $stmt           = $this->prepare('INSERT INTO ' . $table . ' (' . implode(', ', $keys) . ') VALUES ' . $question_marks);
+        $stmt           = $this->prepare(sprintf('INSERT INTO %s (%s) VALUES %s%s', $table, implode(', ', $keys), $question_marks, $trail));
 
         return $stmt->execute($flattened_data);
     }

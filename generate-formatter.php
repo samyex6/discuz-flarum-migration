@@ -112,8 +112,12 @@ $configurator->Preg->match('/\B@(?<username>[\-_a-zA-Z0-9\x{0800}-\x{9fa5}]+)#(?
 function addId($tag) {
     return true;
 }
-
+$configurator->BBCodes->setRegexpLimit(500000);
 $configurator->tags['PSHUFFLE']->tagLimit = 5000;
+$configurator->tags['TR']->tagLimit       = 5000;
+$configurator->tags['TH']->tagLimit       = 5000;
+$configurator->tags['TD']->tagLimit       = 50000;
+$configurator->tags['IMG']->tagLimit      = 5000;
 
 $configurator->rendering->setEngine('PHP', './library/TextBundle');
 $configurator->saveBundle('TextFormatter', './library/TextBundle/TextFormatter.php');
