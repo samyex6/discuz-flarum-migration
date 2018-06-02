@@ -1,0 +1,10 @@
+{
+    "require": {
+        "art4/json-api-client": "^0.9.1",
+        "s9e/text-formatter": "^0.7.1",
+        "illuminate/support": "5.1.*",
+        "intervention/image": "^2.3.0",
+        "ramsey/uuid": "^3.5.2",
+        "moontoast/math": "^1.1"
+    }
+}
